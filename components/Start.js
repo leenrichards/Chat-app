@@ -2,8 +2,6 @@ import React from 'react';
 import { View, Text, Button, TextInput, StyleSheet, ImageBackground, Pressable, TouchableOpacity } from 'react-native';
 
 //------------Background colors--------------------
-
-
 import backgroundImage from "../assets/BackgroundImage.png";
 
 //--------------Start Component---------------------
