@@ -6,7 +6,7 @@ To build a chat app for mobile devices using React Native. The app will
 provide users with a chat interface and options to share images and their
 location
 
-# User Stories
+# User Stories --test git change #2 please work!
 
 - As a new user, I want to be able to easily enter a chat room so I can quickly start talking to my
 friends and family.
