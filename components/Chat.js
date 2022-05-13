@@ -78,7 +78,7 @@ export default class Chat extends React.Component {
                     title="Go to Start"
                     onPress={() => this.props.navigation.navigate("Start")}
                 />
-                <Text>Welcome to Chat!</Text>
+
                 {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
             </View>
         );
