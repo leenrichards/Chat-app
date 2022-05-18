@@ -102,9 +102,9 @@ export default class Chat extends React.Component {
         this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
 
         //User Authentication
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
-                firebase.auth().signInAnonymously();
+                await firebase.auth().signInAnonymously();
             }
             this.setState({
                 uid: 0,
@@ -168,12 +168,7 @@ export default class Chat extends React.Component {
         )
     }
 
-    // When seinding, append old messages to new message
-    onSend(messages = []) {
-        this.setState(previousState => ({
-            messages: GiftedChat.append(previousState.messages, messages),
-        }))
-    }
+
 
 
     render() {
