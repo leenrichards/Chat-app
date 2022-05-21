@@ -107,10 +107,10 @@ export default class Chat extends React.Component {
                 await firebase.auth().signInAnonymously();
             }
             this.setState({
-                uid: 0,
+                uid: user.uid,
                 messages: [],
                 user: {
-                    _id: 0,//user.uid,
+                    _id: user.uid,
                     name: name,
                     avatar: "https://placeimg.com/140/140/any",
                 },
@@ -152,6 +152,8 @@ export default class Chat extends React.Component {
 
     // Change the color of the user/right bubble 
     renderBubble(props) {
+
+
         return (
             <Bubble
                 {...props}
