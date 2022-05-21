@@ -38,7 +38,7 @@ export default class Chat extends React.Component {
             firebase.initializeApp(firebaseConfig);
         }
 
-        //refernces the messages collection in the database
+        //references the messages collection in the database
         this.referenceChatMessages = firebase.firestore().collection("messages");
     }
 
@@ -146,12 +146,8 @@ export default class Chat extends React.Component {
 
     componentWillUnmount() {
         // close connections when app is closed
-        // NetInfo.fetch().then((connection) => {
-        //    if (connection.isConnected) {
         this.unsubscribe();
         this.authUnsubscribe();
-        //    }
-        //  });
     }
 
     // Change the color of the user/right bubble 
@@ -161,7 +157,10 @@ export default class Chat extends React.Component {
                 {...props}
                 wrapperStyle={{
                     right: {
-                        backgroundColor: 'black'
+                        backgroundColor: 'blue'
+                    },
+                    left: {
+                        backgroundColor: 'white'
                     }
                 }}
             />
@@ -177,6 +176,7 @@ export default class Chat extends React.Component {
             <View style={{ flex: 1, backgroundColor: bgColor }}>
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
+                    renderUsernameOnMessage={true}
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
