@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, Button, Platform, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { View, Text, Button, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import firebase from "firebase";
 import "firebase/firestore";
-
+//import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo';
 
 export default class Chat extends React.Component {
 
@@ -82,14 +84,51 @@ export default class Chat extends React.Component {
         });
     }
 
+    //Get Messages from AsyncStorage if user is offline
+    async getMessages() {
+        let messages = '';
+        try {
+            messages = await AsyncStorage.getItem('messages') || [];
+            this.setState({
+                messages: JSON.parse(messages)
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    //Delete messages form AsynStorage
+    async deleteMessages() {
+        try {
+            await AsyncStorage.removeItem('messages');
+            this.setState({
+                messages: []
+            })
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    //Save messages into AsychStorage
+    async saveMessages() {
+        try {
+            await AsyncStorage.setItem('messages', JSON.stringify(this.state.messages));
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     //when a message is sent, calls saveMessage
     onSend(messages = []) {
         this.setState((previousState) => ({
             messages: GiftedChat.append(previousState.messages, messages),
         }), () => {
             this.addMessage();
+            this.saveMessages();//<-----------new for asynch, should it go here?
         });
     }
+
+
 
     componentDidMount() {
 
@@ -97,52 +136,53 @@ export default class Chat extends React.Component {
         const name = this.props.route.params.name;
         this.props.navigation.setOptions({ title: name });
 
-        //take snapshot of messages collection
-        this.referenceChatMessages = firebase.firestore().collection('messages');//do i need this here?/////////////////////
+        //take snapshot of messages collection in the Firestone Database
+        this.referenceChatMessages = firebase.firestore().collection('messages');
         this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
 
-        //User Authentication
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                await firebase.auth().signInAnonymously();
+        //Check if user is connected
+        NetInfo.fetch().then(connection => {
+            if (connection.isConnected) {
+                this.setState({ isConnected: true });
+                console.log('online');
+            } else {
+                console.log('offline');
             }
-            this.setState({
-                uid: user.uid,
-                messages: [],
-                user: {
-                    _id: user.uid,
-                    name: name,
-                    avatar: "https://placeimg.com/140/140/any",
-                },
-            });
-            this.unsubscribe = this.referenceChatMessages
-                .orderBy("createdAt", "desc")
-                .onSnapshot(this.onCollectionUpdate);
-        });
 
-        //set reply, and system messageseded
-        /*this.setState({
-            messages: [
-                {
-                    _id: 1,
-                    text: 'Hello developer',
-                    createdAt: new Date(),
+
+            //User Authentication on Firebase
+            this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                if (!user) {
+                    await firebase.auth().signInAnonymously();
+                }
+                this.setState({
+                    uid: user.uid,
+                    messages: [],
                     user: {
-                        _id: 2,
-                        name: 'React Native',
-                        avatar: 'https://placeimg.com/140/140/any',
+                        _id: user.uid,
+                        name: name,
+                        avatar: "https://placeimg.com/140/140/any",
                     },
-                },
-                {
-                    _id: 2,
-                    text: 'Welcome to chat app ' + name + '!',
-                    createdAt: new Date(),
-                    system: true,
-                },
-            ]
-
-        })*/
+                });
+                this.unsubscribe = this.referenceChatMessages
+                    .orderBy("createdAt", "desc")
+                    .onSnapshot(this.onCollectionUpdate);
+            });
+        });
     }
+
+
+    async getMessages() {
+        let messages = '';
+        try {
+            messages = await AsyncStorage.getItem('messages') || [];
+            this.setState({
+                messages: JSON.parse(messages)
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     componentWillUnmount() {
         // close connections when app is closed
