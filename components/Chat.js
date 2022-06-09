@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, Platform, KeyboardAvoidingView } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import firebase from "firebase";
 import "firebase/firestore";
 //import AsyncStorage from '@react-native-community/async-storage';
@@ -18,10 +18,11 @@ export default class Chat extends React.Component {
                 _id: "",
                 name: "",
                 avatar: "",
+                image: null,
+                location: null,
             },
+            isConnected: false
 
-            image: null,
-            location: null
         };
 
 
@@ -84,19 +85,6 @@ export default class Chat extends React.Component {
         });
     }
 
-    //Get Messages from AsyncStorage if user is offline
-    async getMessages() {
-        let messages = '';
-        try {
-            messages = await AsyncStorage.getItem('messages') || [];
-            this.setState({
-                messages: JSON.parse(messages)
-            });
-        } catch (error) {
-            console.log(error.message);
-        }
-    };
-
     //Delete messages form AsynStorage
     async deleteMessages() {
         try {
@@ -127,7 +115,6 @@ export default class Chat extends React.Component {
             this.saveMessages();//<-----------new for asynch, should it go here?
         });
     }
-
 
 
     componentDidMount() {
@@ -171,7 +158,7 @@ export default class Chat extends React.Component {
         });
     }
 
-
+    //Get Messages from AsyncStorage if user is offline
     async getMessages() {
         let messages = '';
         try {
@@ -190,10 +177,21 @@ export default class Chat extends React.Component {
         this.authUnsubscribe();
     }
 
+
+    // When user is offline disable sending new messages 
+    renderInputToolbar(props) {
+        if (this.state.isConnected == false) {
+        } else {
+            return (
+                <InputToolbar
+                    {...props}
+                />
+            );
+        }
+    }
+
     // Change the color of the user/right bubble 
     renderBubble(props) {
-
-
         return (
             <Bubble
                 {...props}
@@ -209,9 +207,6 @@ export default class Chat extends React.Component {
         )
     }
 
-
-
-
     render() {
         let bgColor = this.props.route.params.bgColor;
         return (
@@ -219,6 +214,7 @@ export default class Chat extends React.Component {
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
                     renderUsernameOnMessage={true}
+                    renderInputToolbar={this.renderInputToolbar.bind(this)}
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
