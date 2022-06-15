@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, Button, Platform, KeyboardAvoidingView } from 'react-native';
-import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
-import firebase from "firebase";
+import { View, Button, Platform, KeyboardAvoidingView } from 'react-native';
+import { GiftedChat, Bubble, MessageText, Time, InputToolbar } from 'react-native-gifted-chat';
+import CustomActions from './CustomActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as firebase from 'firebase';
+import firestore from 'firebase';
 import "firebase/firestore";
-//import AsyncStorage from '@react-native-community/async-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
 
 export default class Chat extends React.Component {
 
@@ -21,8 +23,9 @@ export default class Chat extends React.Component {
                 image: null,
                 location: null,
             },
-            isConnected: false
-
+            isConnected: false,
+            image: null,
+            location: null
         };
 
 
@@ -69,6 +72,12 @@ export default class Chat extends React.Component {
         });
 
     };
+
+    /**
+  * displays the communication features
+  * @function renderCustomActions
+  */
+    renderCustomActions = (props) => <CustomActions {...props} />;
 
     //adding messages to the database
     addMessage() {
@@ -172,9 +181,11 @@ export default class Chat extends React.Component {
     };
 
     componentWillUnmount() {
-        // close connections when app is closed
-        this.unsubscribe();
-        this.authUnsubscribe();
+        // close connections when user is connected 
+        if (this.state.isConnected) {
+            this.unsubscribe();
+            this.authUnsubscribe();
+        }
     }
 
 
@@ -207,11 +218,38 @@ export default class Chat extends React.Component {
         )
     }
 
+
+    //Custom Map View
+    renderCustomView(props) {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
+    }
+
     render() {
         let bgColor = this.props.route.params.bgColor;
         return (
             <View style={{ flex: 1, backgroundColor: bgColor }}>
                 <GiftedChat
+                    renderCustomView={this.renderCustomView}
+                    renderActions={this.renderCustomActions}
                     renderBubble={this.renderBubble.bind(this)}
                     renderUsernameOnMessage={true}
                     renderInputToolbar={this.renderInputToolbar.bind(this)}

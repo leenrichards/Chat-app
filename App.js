@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 // import the screens
 import Start from './components/Start';
 import Chat from './components/Chat';
+
 // import react native gesture handler
 import 'react-native-gesture-handler';
 
@@ -16,10 +17,7 @@ const Stack = createStackNavigator();
 
 
 export default class App extends Component {
-  //constructor(props) {
-  /// super(props);
-  //this.state = { text: '' };
-  // }
+
 
   render() {
     return (
