@@ -1,11 +1,11 @@
 # Chat-app Objective
 To build a chat app for mobile devices using React Native. The app will provide users with a chat interface and options to share images and their location
 
-# Tools
+# Technologies
 - React Native
 - Javascript
 - Expo
-- Navigator
+- Gifted Chat
 - Google Firebase
 
 # User Stories 
@@ -24,16 +24,9 @@ To build a chat app for mobile devices using React Native. The app will provide 
 - The chat must provide users with two additional communication features: sending images and location data.
 - Data gets stored online and offline.
 
-# Screenshots
+# Screenshot
 
-Coming soon!
-
-# Technologies
-
-- React Native
-- Expo
-- Google Firebase
-- Gifted Chat
+![Screenshot](https://github.com/leenrichards/Chat-app/blob/main/img/screenshot.png)
 
 # Installation Instructions
 
