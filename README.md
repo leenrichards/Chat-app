@@ -26,7 +26,13 @@ To build a chat app for mobile devices using React Native. The app will provide 
 
 # Screenshot
 
+- Login screen allowing users to pick Chat-app colors:
+
 ![Screenshot](https://github.com/leenrichards/Chat-app/blob/main/img/screenshot.png)
+
+- Chat Screen with communition (geolocation and image) functionality:
+
+![Screenshot2](https://github.com/leenrichards/Chat-app/blob/main/img/chat%20screen.png)
 
 # Development environment setup
 
